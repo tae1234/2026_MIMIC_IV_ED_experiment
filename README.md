@@ -56,13 +56,7 @@ families, and produces the tables and figures used in the manuscript.
  │   3. PyTorch Residual MLP (ResMLP)                                             │
  │   4. Uncertainty-based selective prediction (risk-coverage)                    │
  └───────────────────────────────────────────────────────────────────────────────┘
-                                   │  prediction CSVs + metric tables
-                                   ▼
- ┌──────────────────────── Stage D: Figures ─────────────────────────────────────┐
- │ fig1_subgroup_timepoint_trajectory   (phenotype 4×2 panels)                   │
- │ fig2_model_roc_pr_overlay            (ROC + PR overlay, 4 models)             │
- │ fig3_xgboost_shap_beeswarm           (global SHAP beeswarm)                   │
- └───────────────────────────────────────────────────────────────────────────────┘
+
 ```
 
 The four **information phenotypes** (Information-Dependent, Precision-Dependent,
@@ -83,9 +77,6 @@ benefits from adding vitals/labs over time relative to triage-only information.
 | B | `1_build_ed_master_dataset.py` | Cohort, labels, time-resolved vitals/labs, composite outcome → per-timepoint masters |
 | B | `3_finalize_analysis_data.py` | Outcome join, outlier clipping → `analysis_master_{0.5h,1h,2h}.parquet` |
 | C | `4_run_all_experiments.py` | All four experiments + prediction CSVs + metric tables + SHAP |
-| D | `fig1_subgroup_timepoint_trajectory.py` | Per-phenotype AUROC/AUPRC trajectory panels |
-| D | `fig2_model_roc_pr_overlay.py` | Four-model ROC and PR curve overlay |
-| D | `fig3_xgboost_shap_beeswarm.py` | XGBoost (2 h) global SHAP beeswarm |
 
 > A `2_train_early_warning_models.py` exploratory script (T0 vs T2 only) also
 > exists; the canonical experiment driver is `4_run_all_experiments.py`.
@@ -175,17 +166,6 @@ python 4_run_all_experiments.py
 
 Runs all four experiments end to end and writes prediction CSVs and metric tables.
 
-### Stage D — Figures
-
-```bash
-python fig1_subgroup_timepoint_trajectory.py   # needs analysis_master_*, edstays, patients
-python fig2_model_roc_pr_overlay.py            # needs model_predictions_2h.csv + pytorch_predictions_2h.csv
-python fig3_xgboost_shap_beeswarm.py           # needs analysis_master_2h, edstays, patients
-```
-
-Run Stage C before Stage D — `fig2` consumes the prediction CSVs produced by
-`4_run_all_experiments.py`.
-
 ---
 
 ## Key design decisions
@@ -236,9 +216,6 @@ calibrated (`CalibratedClassifierCV`).
 | `model_predictions_2h.csv` | `4_` (Exp 2) | LR / RF / XGBoost test predictions + target |
 | `pytorch_predictions_2h.csv` | `4_` (Exp 3) | ResMLP test predictions |
 | `subgroup_timepoint_metrics.csv` | `fig1` | Per-subgroup 0.5/1/2 h AUROC/AUPRC + Δ + phenotype |
-| `Figure1_Subgroup_Phenotype_Trajectory.{png,pdf}` | `fig1` | Phenotype-paneled trajectories |
-| `Figure2_Model_ROC_PR_Overlay.{png,pdf}` | `fig2` | Four-model ROC + PR overlay |
-| `Figure3_XGBoost_SHAP_Beeswarm.{png,pdf}` | `fig3` | XGBoost global SHAP beeswarm |
 
 ---
 
