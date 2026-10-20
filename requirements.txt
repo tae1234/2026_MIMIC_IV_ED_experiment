@@ -1,0 +1,16 @@
+# Python 3.10-3.11. Record the exact versions used for a run with:
+#   pip freeze > requirements_lock.txt
+polars>=1.0
+pandas>=2.0
+numpy
+scipy
+scikit-learn>=1.2
+xgboost
+torch
+shap
+sentence-transformers
+umap-learn
+hdbscan
+bertopic
+matplotlib
+joblib
